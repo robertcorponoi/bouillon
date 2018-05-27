@@ -1,0 +1,26 @@
+{
+  "name": "bouillon",
+  "version": "0.1.2",
+  "description": "Simple JSON storage API for working with persistent data in various types of Node applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha"
+  },
+  "keywords": [
+    "JSON",
+    "persistent",
+    "storage"
+  ],
+  "author": "Robert Corponoi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robertcorponoi/bouillon"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "write-file-atomic": "^2.3.0"
+  }
+}
