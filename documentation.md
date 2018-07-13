@@ -24,10 +24,10 @@ The list of initialization options are as shown:
 Using the most basic configuration we can initialize an instance of bouillion.
 
 ```js
-const Bouillon = require("bouillon");
+const Bouillon = require('bouillon');
 
 let options = {
-    name: "my-awesome-app",
+    name: 'my-awesome-app',
 };
 
 let bouillon = new Bouillon(options);
@@ -37,7 +37,7 @@ let bouillon = new Bouillon(options);
 
 ## **get(key)**
 
-`get(key)` will check the local data object for the specified key and return the value if the key exists. For deep searches, you can input a key with dot notation, for example example: `bouillon.get("favorite.movies.action")` will instruct bouillon to search for the nested action key. If the specified key does not exist, bouillion will simply return `undefined`.
+`get(key)` will check the local data object for the specified key and return the value if the key exists. For deep searches, you can input a key with dot notation, for example example: `bouillon.get('favorite.movies.action')` will instruct bouillon to search for the nested action key. If the specified key does not exist, bouillion will simply return `undefined`.
 
 | Type   | Option | Description                                               | Default |
 | ------ | ------ | --------------------------------------------------------- | ------ |
@@ -50,7 +50,7 @@ Using the following sample storage,
     hello: world,
     favorite: {
         movie: {
-            action: "Indiana Jones"
+            action: 'Indiana Jones'
         }
     }
 }
@@ -59,13 +59,15 @@ Using the following sample storage,
  Getting a top level value:
 
  ```js
- bouillon.get("hello"); // Returns "world"
+ bouillon.get('hello'); 
+ // => 'world'
 ```
 
 Getting a deep nested value
 
 ```js
-bouillion.get("favorite.movie.action"); // Returns "Indiana Jones"
+bouillion.get('favorite.movie.action'); 
+// => 'Indiana Jones'
 ```
 
 ---
@@ -86,7 +88,7 @@ Using the following sample storage,
     hello: world,
     favorite: {
         movie: {
-            action: "Indiana Jones"
+            action: 'Indiana Jones'
         }
     }
 }
@@ -95,17 +97,17 @@ Using the following sample storage,
 Set a top level key to a different value:
 
  ```js
- bouillon.set("hello", "my darling!");
+ bouillon.set('hello', 'my darling!');
 ```
 
 Which causes the object to now look like:
 
 ```js
 {
-    hello: "my darling!",
+    hello: 'my darling!',
     favorite: {
         movie: {
-            action: "Indiana Jones"
+            action: 'Indiana Jones'
         }
     }
 }
@@ -114,18 +116,18 @@ Which causes the object to now look like:
 If you would like to set a deep nested key, such as adding other movies to our favorite movies, use the following:
 
 ```js
-bouillon.set("favorite.movie.comedy", ["Marley and Me", "Bridesmaids", "Dinner for Schmucks"]);
+bouillon.set('favorite.movie.comedy', ['Marley and Me', 'Bridesmaids', 'Dinner for Schmucks']);
 ```
 
 Which causes the object to now look like:
 
 ```js
 {
-    hello: "my darling!",
+    hello: 'my darling!',
     favorite: {
         movie: {
-            action: "Indiana Jones",
-            comedy: ["Marley and Me", "Bridesmaids", "Dinner for Schmucks"]
+            action: 'Indiana Jones',
+            comedy: ['Marley and Me', 'Bridesmaids', 'Dinner for Schmucks']
         }
     }
 }
