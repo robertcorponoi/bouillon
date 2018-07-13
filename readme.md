@@ -1,14 +1,12 @@
 # Bouillon
 
-[add gitter] [add npm tag] [add build] [add coverage]
+Bouillon is a persistant storage soluation for Node that lets you manage your data as an object and when you're ready it will encrypt and write the file for you atomically to disk. You can work with your local copy of the data and save/read the stored version at any time.
 
-Bouillon is a persistant storage option that lets you manage your data as an object and encrypts and stores it in a directory of your choosing. You can work with a local copy of your data and save/read the stored version at any time. 
-
-Bouillon saves your data atomically so that you always have a good version of your data even if something went wrong while saving and it has support for auto-saving if you're confident about your changes to your local object and don't want to worry about saving.
+As Bouillon saves your data atomically, you know that you'll always have a good version of your data even if there was an error while saving.
 
 Bouillon has only one dependency and that is NPM's [`write-file-atomic`](https://www.npmjs.com/package/write-file-atomic) which is used to save the data atomically.
 
-## Installation
+## **Installation**
 
 Bouillon prefers the latest version of node but it will work with node v7.6.0 or higher for ES2015 and async function support.
 
@@ -16,16 +14,15 @@ Bouillon prefers the latest version of node but it will work with node v7.6.0 or
 $ npm install --save bouillon
 ```
 
-## Basic Example
+## **Basic Example**
 
-To start using Bouillon, simply start by requiring the module, setting your desired [options](documentation.md#options), and creating a new instance of the class.
-
+To begin using Bouillion, simply require the module, setup your desired options ([Click here for more information about Bouillon's options](documentation.md#options)), and create a new instance of Bouillon.
 ```js
-const Bouillon = require("bouillon");
+const Bouillon = require('bouillon');
 
-let options = {
-    name: "my-cool-node-app",
-    encryptionKey: "PfHJgpKNEKawuTHDCRmdTZKMyfvSZGnf",
+const options = {
+  name: 'my-cool-node-app',
+  encryptionKey: 'PfHJgpKNEKawuTHDCRmdTZKMyfvSZGnf',
 };
 
 let bouillon = new Bouillon(options);
@@ -34,7 +31,7 @@ let bouillon = new Bouillon(options);
 From there you're free to modify the local object and save it.
 
 ```js
-bouillon.set("favorite.movie", "Iron Man");
+bouillon.set('favorite.movie', 'Iron Man');
 
 bouillon.write()
     .then((data) => {

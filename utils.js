@@ -1,38 +1,33 @@
-"use strict"
+'use strict'
 
 module.exports = {
-    /**
-     * Iterate through an object and find the deep level key and when found,
-     * assign the existing object to it and return it.
-     * @private
-     * @param {Array} keys - The key string split into an array.
-     * @param {Object} obj - The object to search through for the key.
-     * @returns {*}
-     */
-    findKey(keys, obj) {
-        for (let i = 0, len = keys.length; i < len; ++i) {
-            let curr = keys[i];
+  /**
+   * Search an object to find a deep level key and return it if it exists.
+   * 
+   * @since 0.1.0
+   * @param {Array} keys The key to search for including the keys parenting it.
+   * @param {Object} storage The storage object to search through for the specified key.
+   * @returns {*}
+   */
+  getKeyValue(keys, storage) {
+    for (let i = 0, storeLen = keys.length; i < storeLen; ++i) {
+      if (keys[i] in storage) storage = storage[keys[i]];
+      else return;
+    }
 
-            if (curr in obj) {
-                obj = obj[curr]
-            }
-            else {
-                return;
-            }
-        }
+    return storage;
+  },
 
-        return obj;
-    },
+  /**
+   * Get the current working directory of the project.
+   * 
+   * @since 0.1.0
+   * @returns {string}
+   */
+  getCWD() {
+    let dir = module.parent.filename.split('\\');
+    dir.pop();
 
-    /**
-     * Return the current working directory which is going to be used
-     * as a default value if a cwd isn't provided.
-     * @private
-     * @returns {string}
-     */
-    getCwd() {
-        let cwd = module.parent.filename.split("\\");
-        cwd.pop();
-        return cwd.join("\\");
-    },
+    return dir.join('\\');
+  }
 }
