@@ -1,6 +1,6 @@
 # Bouillon
 
-Bouillon is a persistant storage soluation for Node that lets you manage your data as an object and when you're ready it will encrypt and write the file for you atomically to disk. You can work with your local copy of the data and save/read the stored version at any time.
+Bouillon is a persistant storage solution for Node that lets you manage your data as an object and when you're ready it will encrypt and write the file for you atomically to disk. You can work with your local copy of the data and save/read the stored version at any time.
 
 As Bouillon saves your data atomically, you know that you'll always have a good version of your data even if there was an error while saving.
 
