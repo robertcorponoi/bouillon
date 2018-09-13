@@ -13,7 +13,7 @@ const options = {
 const bouillon = new Bouillon(options);
 
 // Set a default store so that the test has simulated data to work with.
-bouillon.store = {
+bouillon._store = {
   'hello': 'world',
   'favorites': {
     'game': {
@@ -54,32 +54,32 @@ describe('Bouillon', () => {
 
     it('should set a new top level key of coffee:black', () => {
       bouillon.set('coffee', 'black');
-      assert.deepEqual(bouillon.store['coffee'], 'black');
+      assert.deepEqual(bouillon._store['coffee'], 'black');
     });
 
     it('should set a new key value pair under "game" with relaxing:Stardew Valley', () => {
       bouillon.set('favorites.game.relaxing', 'Stardew Valley');
-      assert.deepEqual(bouillon.store['favorites']['game']['relaxing'], 'Stardew Valley');
+      assert.deepEqual(bouillon._store['favorites']['game']['relaxing'], 'Stardew Valley');
     });
 
     it('should replace the key value pair of hello:world to hello:my darling', () => {
       bouillon.set('hello', 'my darling');
-      assert.deepEqual(bouillon.store['hello'], 'my darling');
+      assert.deepEqual(bouillon._store['hello'], 'my darling');
     });
 
     it('should replace the existing deep level key value pair of favorite.game.action: Tomb Raider to favorite.game.action: Uncharted', () => {
       bouillon.set('favorites.game.action', 'Uncharted');
-      assert.deepEqual(bouillon.store['favorites']['game']['action'], 'Uncharted');
+      assert.deepEqual(bouillon._store['favorites']['game']['action'], 'Uncharted');
     });
 
     it('should set a new top level key value pair of friends: [Joe, Bob, Susan, Mary, Sally]', () => {
       bouillon.set('friends', ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
-      assert.deepEqual(bouillon.store['friends'], ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
+      assert.deepEqual(bouillon._store['friends'], ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
     });
 
     it('should set up a new deep level key value pair of favorite.game.friends: [Joe, Bob, Susan, Mary, Sally]', () => {
       bouillon.set('favorites.game.friends', ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
-      assert.deepEqual(bouillon.store['favorites']['game']['friends'], ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
+      assert.deepEqual(bouillon._store['favorites']['game']['friends'], ['Joe', 'Bob', 'Susan', 'Mary', 'Sally']);
     });
 
     it('should set up a new top level key value pair of pizza: [Object]', () => {
@@ -91,7 +91,7 @@ describe('Bouillon', () => {
         }
       };
       bouillon.set('pizza', obj);
-      assert.deepEqual(bouillon.store['pizza'], obj);
+      assert.deepEqual(bouillon._store['pizza'], obj);
     });
 
     it('should set up a new deep level key value pair of pizza: [Object]', () => {
@@ -103,7 +103,7 @@ describe('Bouillon', () => {
         }
       };
       bouillon.set('favorites.game.food', obj);
-      assert.deepEqual(bouillon.store['favorites']['game']['food'], obj);
+      assert.deepEqual(bouillon._store['favorites']['game']['food'], obj);
     });
 
   });
@@ -113,7 +113,7 @@ describe('Bouillon', () => {
     it('should create an encrypted mocha-test.txt file asynchronously', async () => {
       const write = await bouillon.write();
 
-      assert(fs.existsSync(`${bouillon.cwd}/${bouillon.name}.txt`), true);
+      assert(fs.existsSync(`${bouillon._options.cwd}/${bouillon._options.name}.txt`), true);
     });
 
   });
@@ -123,7 +123,7 @@ describe('Bouillon', () => {
     it('should create an encrypted mocha-test.txt file synchronously', () => {
       const write = bouillon.writeSync();
 
-      assert(fs.existsSync(`${bouillon.cwd}/${bouillon.name}.txt`), true);
+      assert(fs.existsSync(`${bouillon._options.cwd}/${bouillon._options.name}.txt`), true);
     });
 
   });
@@ -135,18 +135,18 @@ describe('Bouillon', () => {
       assert.deepEqual(typeof (response), 'object');
     });
 
-    it('should match the JSON structure of bouillon.store', async () => {
+    it('should match the JSON structure of bouillon._store', async () => {
       const response = await bouillon.read();
-      assert.deepEqual(response, bouillon.store);
-      fs.unlinkSync(`${bouillon.cwd}/${bouillon.name}.txt`);
+      assert.deepEqual(response, bouillon._store);
+      fs.unlinkSync(`${bouillon._options.cwd}/${bouillon._options.name}.txt`);
     });
 
   });
 
   describe('#storage()', () => {
 
-    it('should display the current local data object and match bouillon.store', () => {
-      assert.deepEqual(bouillon.storage(), bouillon.store);
+    it('should display the current local data object and match bouillon._store', () => {
+      assert.deepEqual(bouillon.storage(), bouillon._store);
     });
 
   });
