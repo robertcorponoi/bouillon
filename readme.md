@@ -6,7 +6,7 @@
 
 <p align="center">Simple JSON storage API for working with persistent data in various types of Node applications<p>
 
-<div align="center">
+<div align="center" style="margin-bottom: 1.5rem">
   <a href="https://badge.fury.io/js/bouillon"><img src="https://badge.fury.io/js/bouillon.svg" alt="npm version" height="18"></a>
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="build" height="18"></a>
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/github/issues/robertcorponoi/bouillon.svg" alt="issues" height="18"></a>
@@ -44,7 +44,7 @@ The list of initialization options are as shown:
 
 ## **Basic Example**
 
-To begin using Bouillion, simply require the module, setup your desired options ([Click here for more information about Bouillon's options](documentation.md#options)), and create a new instance of Bouillon.
+To begin using Bouillion, simply require the module, setup your desired options and create a new instance of Bouillon.
 ```js
 const Bouillon = require('bouillon');
 
