@@ -1,33 +1,53 @@
 'use strict'
 
+/**
+ * Utility functions meant for Bouillon to help find nested keys
+ * in the local storage object and for getting the default working
+ * directory if none is provided in the options.
+ * 
+ * @since 0.1.0
+ */
 module.exports = {
+
   /**
-   * Search an object to find a deep level key and return it if it exists.
+   * Search the storage object and find a deep level key.
    * 
    * @since 0.1.0
-   * @param {Array} keys The key to search for including the keys parenting it.
-   * @param {Object} storage The storage object to search through for the specified key.
-   * @returns {*}
+   * 
+   * @param {Array} key The key, including its parent, to search for in the storage object.
+   * @param {Object} storage The local storage object from Bouillon.
+   * 
+   * @returns {string} The key if found in the storage object.
    */
   getKeyValue(keys, storage) {
+
     for (let i = 0, storeLen = keys.length; i < storeLen; ++i) {
+      
       if (keys[i] in storage) storage = storage[keys[i]];
+
       else return;
     }
 
     return storage;
+
   },
 
   /**
-   * Get the current working directory of the project.
+   * Get the current working directory of the application.
+   * 
+   * This is used if the user does not pass in a cwd in the options
+   * when initializing Bouillon.
    * 
    * @since 0.1.0
-   * @returns {string}
+   * 
+   * @returns {string} The current working directory of the user's application.
    */
   getCWD() {
+
     let dir = module.parent.filename.split('\\');
     dir.pop();
 
     return dir.join('\\');
+    
   }
 }
