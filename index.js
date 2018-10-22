@@ -33,20 +33,39 @@ module.exports = class Bouillon {
      * Creates an options object my merging user specified
      * options with the defaults.
      * 
-     * @prop {Object}
+     * @property {Object}
      * @readonly
      */
     this._options = Object.assign({
+
+      /**
+       * The name of the application running Bouillon.
+       * 
+       * @property {string}
+       * @readonly
+       */
       name: 'bouillion-app',
-      cwd: utils.getCWD(),
-      autosave: true,
+
+      /**
+       * The location to save the storage file.
+       * 
+       * @property {string}
+       * @readonly
+       */
+      cwd: process.cwd(),
+
+      /**
+       * Indicates whether the data should save to disk after it is saved locally.
+       */
+      autosave: false,
+
     }, options);
 
     /**
      * The local storage object which will be used to store data until
      * it is saved.
      * 
-     * @prop {Object}
+     * @property {Object}
      * @readonly
      */
     this._store = {};

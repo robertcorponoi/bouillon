@@ -30,24 +30,6 @@ module.exports = {
 
     return storage;
 
-  },
-
-  /**
-   * Get the current working directory of the application.
-   * 
-   * This is used if the user does not pass in a cwd in the options
-   * when initializing Bouillon.
-   * 
-   * @since 0.1.0
-   * 
-   * @returns {string} The current working directory of the user's application.
-   */
-  getCWD() {
-
-    let dir = module.parent.filename.split('\\');
-    dir.pop();
-
-    return dir.join('\\');
-    
   }
+  
 }
