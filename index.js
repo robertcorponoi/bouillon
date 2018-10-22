@@ -5,33 +5,32 @@ const crypto = require('crypto');
 const writeFileAtomic = require('write-file-atomic');
 const utils = require('./utils');
 
-// Reset the cache.
+/**
+ * Reset the modules cache.
+ */
 delete require.cache[require.resolve(__filename)];
 
 /**
- * Bouillion is a persistent storage API that accepts data as a key value
- * pair and saves it to JSON file locally.
+ * Bouillion is a persistent storage solution for Node.JS that allows you to input data as
+ * key value pairs and save it locally to a text file which can then be retrieved back as an
+ * object.
  * 
- * All data is saved atomically which means that the file being saved over
- * when new data is saved will not be corrupted if something happens to interfere
- * with the saving process.
- * 
- * @since 0.1.0
+ * All data is written atomically which means that when the file data is being saved, the old
+ * data will not be corrupted if something interferes with the operation.
  */
 module.exports = class Bouillon {
 
   /**
- * @param {Object} options A set of options for initializing a new Bouillion instance.
- * @param {string} [name='bouillon-app'] The name of your application.
- * @param {string} [cwd='./path/to/application'] The directory of your application. This will be retrieved automatically if not specified.
- * @param {boolean} [autosave=false] Indicates whether boolean should autosave any newly added data to the saved JSON file.
- * @param {string} [encryptionKey] An aes-256 compatible key to use for encrypting save data.
- */
+   * @param {Object} [options]
+   * @param {string} [options.name='bouillon-storage'] The name of the file that Bouillon saves the data to.
+   * @param {string} [options.cwd='process.cwd()'] The location where you want Bouillon to save the data file to.
+   * @param {boolean} [options.autosave=false] Set this to true if you want Bouillon to automatically write the data to the text file whenever new data is added locally.
+   * @param {string} [options.encryptionKey] An aes-256 compatible key to use for encrypting save data.
+   */
   constructor(options = {}) {
 
     /**
-     * Creates an options object my merging user specified
-     * options with the defaults.
+     * Create an options object by merging the user specified options with the defaults.
      * 
      * @property {Object}
      * @readonly
@@ -39,15 +38,15 @@ module.exports = class Bouillon {
     this._options = Object.assign({
 
       /**
-       * The name of the application running Bouillon.
+       * The name of the file that Bouillon saves the data to.
        * 
        * @property {string}
        * @readonly
        */
-      name: 'bouillion-app',
+      name: 'bouillion-storage',
 
       /**
-       * The location to save the storage file.
+       * The location where you want Bouillon to save the data file to.
        * 
        * @property {string}
        * @readonly
@@ -55,9 +54,20 @@ module.exports = class Bouillon {
       cwd: process.cwd(),
 
       /**
-       * Indicates whether the data should save to disk after it is saved locally.
+       * Indicates whether Bouillon should automatically write the data to the text file whenever new data is added locally.
+       * 
+       * @property {boolean}
+       * @readonly
        */
       autosave: false,
+
+      /**
+       * An aes-256 compatible key to use for encrypting save data.
+       * 
+       * @property {string}
+       * @readonly
+       */
+      encryptionKey: null
 
     }, options);
 
@@ -92,6 +102,7 @@ module.exports = class Bouillon {
     if (key.indexOf('.') < 0) return this._store[key];
 
     const keys = key.split('.');
+
     const _store = this._store;
 
     return utils.getKeyValue(keys, _store);
@@ -124,6 +135,7 @@ module.exports = class Bouillon {
     } else {
 
       const keys = key.split('.');
+
       const last = keys.pop();
 
       let _store = this._store;
@@ -155,6 +167,7 @@ module.exports = class Bouillon {
       if (this._options.encryptionKey) {
 
         this._iv = crypto.randomBytes(16);
+
         let cipher = crypto.createCipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
 
         _store = Buffer.concat([cipher.update(_store), cipher.final()]);
@@ -164,6 +177,7 @@ module.exports = class Bouillon {
       writeFileAtomic(`${this._options.cwd}/${this._options.name}.txt`, _store, (err) => {
 
         if (err) reject(err);
+
         resolve();
 
       });
@@ -188,6 +202,7 @@ module.exports = class Bouillon {
     if (this._options.encryptionKey) {
 
       this._iv = crypto.randomBytes(16);
+
       let cipher = crypto.createCipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
 
       _store = Buffer.concat([cipher.update(_store), cipher.final()]);
@@ -211,6 +226,7 @@ module.exports = class Bouillon {
     return new Promise(resolve => {
 
       let stream = fs.createReadStream(`${this._options.cwd}/${this._options.name}.txt`);
+
       let response;
 
       stream.on('data', data => {
@@ -218,6 +234,7 @@ module.exports = class Bouillon {
         if (this._options.encryptionKey) {
 
           let decipher = crypto.createDecipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
+          
           response = JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]));
 
         }
