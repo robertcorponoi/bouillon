@@ -233,9 +233,9 @@ let data = await bouillon.read().catch((err) => console.log(err));
 
 ---
 
-## **storage()**
+## **store**
 
-`storage()` simply returns the current local data object. It's the same as if you would access the store as `bouillon._store`.
+`store` simply returns the current local data object. It's the same as if you would access the store as `bouillon._store`.
 
 ---
 

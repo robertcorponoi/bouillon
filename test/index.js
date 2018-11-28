@@ -143,10 +143,10 @@ describe('Bouillon', () => {
 
   });
 
-  describe('#storage()', () => {
+  describe('#store', () => {
 
     it('should display the current local data object and match bouillon._store', () => {
-      assert.deepEqual(bouillon.storage(), bouillon._store);
+      assert.deepEqual(bouillon.store, bouillon._store);
     });
 
   });

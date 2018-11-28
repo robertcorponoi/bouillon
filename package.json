@@ -1,6 +1,6 @@
 {
   "name": "bouillon",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "description": "Simple JSON storage API for working with persistent data in various types of Node applications.",
   "main": "index.js",
   "scripts": {

@@ -3,7 +3,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
 const writeFileAtomic = require('write-file-atomic');
-const utils = require('./utils');
 
 /**
  * Reset the modules cache.
@@ -83,6 +82,22 @@ module.exports = class Bouillon {
   }
 
   /**
+   * Return the local storage object as it is.
+   * 
+   * This is a read-only operation and if you modify the object and pass it back to Bouillion
+   * it will cause issues with other operations.
+   * 
+   * @since 0.1.0
+   * 
+   * @returns {Object}
+   */
+  get store() {
+
+    return this._store;
+
+  }
+
+  /**
    * Return the value associated with the specified key.
    * 
    * Note that for performance reasons, this reads from the local storage object,
@@ -99,13 +114,13 @@ module.exports = class Bouillon {
    */
   get(key) {
 
-    if (key.indexOf('.') < 0) return this._store[key];
+    if (!key.includes('.') && this._store.hasOwnProperty(key)) return this._store[key];
 
     const keys = key.split('.');
 
     const _store = this._store;
 
-    return utils.getKeyValue(keys, _store);
+    return this._getKeyValue(keys, _store);
 
   }
 
@@ -126,7 +141,7 @@ module.exports = class Bouillon {
 
     let obj = {};
 
-    if (key.indexOf('.') < 0) {
+    if (!key.includes('.')) {
 
       obj[key] = value;
 
@@ -140,9 +155,9 @@ module.exports = class Bouillon {
 
       let _store = this._store;
 
-      _store = utils.getKeyValue(keys, _store);
+      _store = this._getKeyValue(keys, _store);
 
-      if (_store === undefined) throw new Error('Creation of only 1 new key per set operation is supported');
+      if (_store == undefined) throw new Error('Creation of only 1 new key per set operation is supported');
 
       _store[last] = value;
 
@@ -234,7 +249,7 @@ module.exports = class Bouillon {
         if (this._options.encryptionKey) {
 
           let decipher = crypto.createDecipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
-          
+
           response = JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]));
 
         }
@@ -250,18 +265,27 @@ module.exports = class Bouillon {
   }
 
   /**
-   * Return the local storage object as it is.
-   * 
-   * This is a read-only operation and if you modify the object and pass it back to Bouillion
-   * it will cause issues with other operations.
+   * Search the storage object and find a deep level key.
    * 
    * @since 0.1.0
+   * @private
    * 
-   * @returns {Object}
+   * @param {Array} key The key, including its parent, to search for in the storage object.
+   * @param {Object} storage The local storage object from Bouillon.
+   * 
+   * @returns {string} The key if found in the storage object.
    */
-  storage() {
+  _getKeyValue(keys, storage) {
 
-    return this._store;
+    for (let key of keys) {
+
+      if (storage.hasOwnProperty(key)) storage = storage[key];
+
+      else return;
+
+    }
+
+    return storage;
 
   }
 
