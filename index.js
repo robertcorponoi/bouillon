@@ -1,292 +1,427 @@
-'use strict'
+'use strict';
 
-const fs = require('fs');
-const crypto = require('crypto');
-const writeFileAtomic = require('write-file-atomic');
-
-/**
- * Reset the modules cache.
- */
-delete require.cache[require.resolve(__filename)];
-
-/**
- * Bouillion is a persistent storage solution for Node.JS that allows you to input data as
- * key value pairs and save it locally to a text file which can then be retrieved back as an
- * object.
- * 
- * All data is written atomically which means that when the file data is being saved, the old
- * data will not be corrupted if something interferes with the operation.
- */
-module.exports = class Bouillon {
-
-  /**
-   * @param {Object} [options]
-   * @param {string} [options.name='bouillon-storage'] The name of the file that Bouillon saves the data to.
-   * @param {string} [options.cwd='process.cwd()'] The location where you want Bouillon to save the data file to.
-   * @param {boolean} [options.autosave=false] Set this to true if you want Bouillon to automatically write the data to the text file whenever new data is added locally.
-   * @param {string} [options.encryptionKey] An aes-256 compatible key to use for encrypting save data.
-   */
-  constructor(options = {}) {
-
-    /**
-     * Create an options object by merging the user specified options with the defaults.
-     * 
-     * @property {Object}
-     * @readonly
-     */
-    this._options = Object.assign({
-
-      /**
-       * The name of the file that Bouillon saves the data to.
-       * 
-       * @property {string}
-       * @readonly
-       */
-      name: 'bouillion-storage',
-
-      /**
-       * The location where you want Bouillon to save the data file to.
-       * 
-       * @property {string}
-       * @readonly
-       */
-      cwd: process.cwd(),
-
-      /**
-       * Indicates whether Bouillon should automatically write the data to the text file whenever new data is added locally.
-       * 
-       * @property {boolean}
-       * @readonly
-       */
-      autosave: false,
-
-      /**
-       * An aes-256 compatible key to use for encrypting save data.
-       * 
-       * @property {string}
-       * @readonly
-       */
-      encryptionKey: null
-
-    }, options);
-
-    /**
-     * The local storage object which will be used to store data until
-     * it is saved.
-     * 
-     * @property {Object}
-     * @readonly
-     */
-    this._store = {};
-
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
   }
+}
 
-  /**
-   * Return the local storage object as it is.
-   * 
-   * This is a read-only operation and if you modify the object and pass it back to Bouillion
-   * it will cause issues with other operations.
-   * 
-   * @since 0.1.0
-   * 
-   * @returns {Object}
-   */
-  get store() {
+var classCallCheck = _classCallCheck;
 
-    return this._store;
-
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
   }
+}
 
-  /**
-   * Return the value associated with the specified key.
-   * 
-   * Note that for performance reasons, this reads from the local storage object,
-   * NOT the saved JSON file. You should write to the storage and save so that they
-   * almost match unless you're sure the data is temporary.
-   * 
-   * To read data from the stored JSON file, use `read`.
-   * 
-   * @since 0.1.0
-   * 
-   * @param {string} key The key in the storage objects that contains the value you would like to get. If it is a nested key, it must be specified with dot notation syntax.
-   * 
-   * @returns {*} The value of the key which can be any data type that can be placed in an object.
-   */
-  get(key) {
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
-    if (!key.includes('.') && this._store.hasOwnProperty(key)) return this._store[key];
+var createClass = _createClass;
 
-    const keys = key.split('.');
-
-    const _store = this._store;
-
-    return this._getKeyValue(keys, _store);
-
-  }
-
-  /**
-   * Add a key and value pair to the local storage object.
-   * 
-   * Note that this modiifies the local storage object, you will still have to call `save`
-   * to save this data to the JSON file. This can also be done automatically by setting the
-   * `autostart` property of Bouillion to true but it is not recommended for users that will
-   * use `set` a lot and instead is recommended that `save` be called at the end.
-   * 
-   * @since 0.1.0
-   * 
-   * @param {string} key The key that will be inserted into the storage object. To set nested key, it must be specified with dot notation syntax.
-   * @param {*} value A value to set for the key. This can be any data type that can be used in an object.
-   */
-  set(key, value) {
-
-    let obj = {};
-
-    if (!key.includes('.')) {
-
-      obj[key] = value;
-
-      this._store = Object.assign(this._store, obj);
-
-    } else {
-
-      const keys = key.split('.');
-
-      const last = keys.pop();
-
-      let _store = this._store;
-
-      _store = this._getKeyValue(keys, _store);
-
-      if (_store == undefined) throw new Error('Creation of only 1 new key per set operation is supported');
-
-      _store[last] = value;
-
-    }
-
-  }
-
-  /**
-   * Encyrpt, if desired, and write a file asynchronously and atomically to the disk so that if
-   * the operation is interrupted in any way the existing file will not be corrupted.
-   * 
-   * @since 0.1.0
-   * 
-   * @returns {Promise}
-   */
-  write() {
-
-    return new Promise((resolve, reject) => {
-
-      let _store = JSON.stringify(this._store);
-
-      if (this._options.encryptionKey) {
-
-        this._iv = crypto.randomBytes(16);
-
-        let cipher = crypto.createCipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
-
-        _store = Buffer.concat([cipher.update(_store), cipher.final()]);
-
-      }
-
-      writeFileAtomic(`${this._options.cwd}/${this._options.name}.txt`, _store, (err) => {
-
-        if (err) reject(err);
-
-        resolve();
-
-      });
-
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
     });
-
+  } else {
+    obj[key] = value;
   }
 
-  /**
-   * Encrypt, if desired, and write a file synchronously and atomically to the disk so that
-   * if the operation is interrupted in any way the existing file will not be corrupted.
-   * 
-   * Note that this is a synchronous action and is generally not recommended unless you specifically
-   * know what you are doing.
-   * 
-   * @since 0.1.0
-   */
-  writeSync() {
+  return obj;
+}
 
-    let _store = JSON.stringify(this._store);
+var defineProperty = _defineProperty;
 
-    if (this._options.encryptionKey) {
+var pkg = require('./package.json');
+/**
+ * Defines the options available for Bouillon along with their default values
+ * which will be used if no value is provided for the option.
+ * 
+ * @author Robert Corponoi <robertcorponoi@gmail.com>
+ * 
+ * @version 0.1.0
+ */
 
-      this._iv = crypto.randomBytes(16);
 
-      let cipher = crypto.createCipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
+var Options =
+/**
+ * The name Bouillion will use for the file that contains the
+ * saved data.
+ * 
+ * @since 0.1.0
+ * 
+ * @property {string}
+ * 
+ * @default pkg.name
+ */
 
-      _store = Buffer.concat([cipher.update(_store), cipher.final()]);
+/**
+ * The location where Bouiillion should save the text file containing
+ * the saved data.
+ * 
+ * @since 0.1.0
+ * 
+ * @property {string}
+ * 
+ * @default process.cwd()
+ */
 
+/**
+ * Indicates whether the text file will be written automatically after
+ * every time data is added.
+ * 
+ * This is useful to solidify data however it can occur a performance
+ * cost with frequent saves.
+ * 
+ * @since 0.1.0
+ * 
+ * @property {boolean}
+ * 
+ * @default false
+ */
+
+/**
+ * An AES-256 compatible key to use for encryptin save data.
+ * 
+ * @since 0.1.0
+ * 
+ * @property {string}
+ * 
+ * @default ''
+ */
+
+/**
+ * @param {Object} options The initialization options passed to Bouillion.
+ */
+function Options(options) {
+  classCallCheck(this, Options);
+
+  defineProperty(this, "name", pkg.name);
+
+  defineProperty(this, "cwd", process.cwd());
+
+  defineProperty(this, "autosave", false);
+
+  defineProperty(this, "encryptionKey", '');
+
+  Object.assign(this, options);
+};
+
+/**
+ * Contains methods for searching the storage object for particular
+ * data.
+ * 
+ * @author Robert Corponoi <robertcorponoi@gmail.com>
+ * 
+ * @version 0.1.0
+ */
+
+/**
+ * Search the storage object and find a deep level key.
+ * 
+ * @since 0.1.0
+ * 
+ * @param {Array<string>} keys The key to search for split into an array.
+ * @param {Store} store The storage object to search.
+ * 
+ * @returns {Store|undefined} The value if found.
+ */
+
+function getKeyValue(keys, store) {
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var key = _step.value;
+      if (store[key]) store = store[key];else return;
     }
-
-    writeFileAtomic.sync(`${this._options.cwd}/${this._options.name}.txt`, _store);
-
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
   }
 
+  return store;
+}
+
+var fs = require('fs');
+
+var crypto = require('crypto');
+
+var writeFileAtomic = require('write-file-atomic');
+
+delete require.cache[require.resolve(__filename)];
+/**
+ * Bouillion is a non-database persistent storage solution for Node that saves
+ * data in a temporary key-value storage and then later to a file on disk.
+ * 
+ * The data can then be retrieved either from the temporary storage or from the
+ * disk back as key-value pairs.
+ * 
+ * When writing data to disk, it is done atomically so no data can be lost in
+ * case of a mishap.
+ * 
+ * @author Robert Corponoi <robertcorponoi@gmail.com>
+ * 
+ * @version 1.1.0
+ */
+
+var Bouillion =
+/*#__PURE__*/
+function () {
   /**
-   * Asynchronously read the JSON storage file from the disk and return the data parsed as
-   * an object.
+   * The options for this instance of Bouillon.
+   * 
+   * @since 1.1.0
+   * 
+   * @property {Options}
+   * @readonly
+   */
+
+  /**
+   * The local storage object which will be used to store data until it gets
+   * saved.
    * 
    * @since 0.1.0
    * 
-   * @returns {Promise}
+   * @property {Store}
    */
-  read() {
 
-    return new Promise(resolve => {
+  /**
+   * The initialization vector to use for encryption.
+   * 
+   * @since 0.1.0
+   * 
+   * @property {Buffer}
+   */
 
-      let stream = fs.createReadStream(`${this._options.cwd}/${this._options.name}.txt`);
+  /**
+   * @param {Options} [options]
+   * @param {string} [options.name='package.json.name'] The name Bouillion will use for the file that contains the saved data.
+   * @param {string} [options.cwd=process.cwd()] The location where Bouiillion should save the text file containing the saved data.
+   * @param {boolean} [options.autosave=false] Indicates whether the text file will be written automatically after every time data is added.
+   * @param {string} [options.encryptionKey=''] An AES-256 compatible key to use for encryptin save data.
+   */
+  function Bouillion() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      let response;
+    classCallCheck(this, Bouillion);
 
-      stream.on('data', data => {
+    defineProperty(this, "options", void 0);
 
-        if (this._options.encryptionKey) {
+    defineProperty(this, "_store", {});
 
-          let decipher = crypto.createDecipheriv('aes-256-cbc', this._options.encryptionKey, this._iv);
+    defineProperty(this, "iv", crypto.randomBytes(16));
 
-          response = JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]));
+    this.options = new Options(options);
+  }
+  /**
+   * Returns the local storage object as is.
+   * 
+   * This is a read-only operation meaning you should not modify the object
+   * and pass it back to Bouillion to avoid conflicts.
+   * 
+   * @since 0.1.0
+   * 
+   * @returns {Store}
+   * 
+   * @example
+   * 
+   * const store = bouillon.store;
+   */
 
+
+  createClass(Bouillion, [{
+    key: "get",
+
+    /**
+     * Returns the value associated with the specified key.
+     * 
+     * Note that for performance reasons, this reads from the local storage object and
+     * NOT the saved JSON file. You should write the data to the storage to ensure that
+     * they are both up to date.
+     * 
+     * To read the data from the save file, use `read` instead.
+     * 
+     * @since 0.1.0
+     * 
+     * @param {string} key The key to get the value of. If it is a nested value, use dot notation syntax to define the key.
+     * 
+     * @returns {*} Returns the value of the key specified.
+     * 
+     * @example
+     * 
+     * const favoriteFoods = bouillion.get('favorite.foods');
+     */
+    value: function get(key) {
+      if (!key.includes('.') && this._store.hasOwnProperty(key)) return this._store[key];
+      var keys = key.split('.');
+      var _store = this._store;
+      return getKeyValue(keys, _store);
+    }
+    /**
+     * Add a key-value pair to the local storage object.
+     * 
+     * Note that this modifies the local storage object but you will still have to call
+     * `save` to save the data to a file. This process can be done automatically by setting
+     * the `autosave` property to `true` during initialization but at a performance cost
+     * for frequence saves. It is instead just recommended to call `save` manually.
+     * 
+     * @since 0.1.0
+     * 
+     * @param {string} key The key for the value to store. If storing in a nested location use dot notation syntax.
+     * @param {*} value The value to associate with the key.
+     * 
+     * @example
+     * 
+     * bouillon.set('favorite.foods.pizza', 'pepperoni');
+     */
+
+  }, {
+    key: "set",
+    value: function set(key, value) {
+      var obj = {};
+
+      if (!key.includes('.')) {
+        obj[key] = value;
+        this._store = Object.assign(this._store, obj);
+      } else {
+        var keys = key.split('.');
+        var last = keys.pop();
+        var _store = this._store;
+        _store = getKeyValue(keys, _store);
+        if (_store == undefined) throw new Error('Creation of only 1 new key per set operation is supported');
+        _store[last] = value;
+      }
+    }
+    /**
+     * Write and encrypt, if an encryption key is present, a file asynchronously and atomically
+     * to the disk.
+     * 
+     * @since 0.1.0
+     * @async
+     * 
+     * @returns {Promise<>}
+     * 
+     * @example
+     * 
+     * await bouillon.write();
+     * 
+     * bouillon.write().then(() => console.log('Hello!'));
+     */
+
+  }, {
+    key: "write",
+    value: function write() {
+      var _this = this;
+
+      return new Promise(function (resolve, reject) {
+        var _store = JSON.stringify(_this._store);
+
+        if (_this.options.encryptionKey) {
+          _this.iv = crypto.randomBytes(16);
+          var cipher = crypto.createCipheriv('aes-256-cbc', _this.options.encryptionKey, _this.iv);
+          _store = Buffer.concat([cipher.update(_store), cipher.final()]);
         }
 
-        stream.destroy();
-
+        writeFileAtomic("".concat(_this.options.cwd, "/").concat(_this.options.name, ".txt"), _store, function (err) {
+          if (err) reject(err);
+          resolve();
+        });
       });
-
-      stream.on('close', () => resolve(response));
-
-    });
-
-  }
-
-  /**
-   * Search the storage object and find a deep level key.
-   * 
-   * @since 0.1.0
-   * @private
-   * 
-   * @param {Array} key The key, including its parent, to search for in the storage object.
-   * @param {Object} storage The local storage object from Bouillon.
-   * 
-   * @returns {string} The key if found in the storage object.
-   */
-  _getKeyValue(keys, storage) {
-
-    for (let key of keys) {
-
-      if (storage.hasOwnProperty(key)) storage = storage[key];
-
-      else return;
-
     }
+    /**
+     * Write and encrypt, if an encryption key is present, a file synchronously and atomically
+     * to the disk.
+     * 
+     * Note that this is a synchronous operation and is generally not recommended unless you know
+     * that you need to use it in this fashion.
+     * 
+     * @since 0.1.0
+     * 
+     * @example
+     * 
+     * bouillon.writeSync();
+     */
 
-    return storage;
+  }, {
+    key: "writeSync",
+    value: function writeSync() {
+      var _store = JSON.stringify(this._store);
 
-  }
+      if (this.options.encryptionKey) {
+        this.iv = crypto.randomBytes(16);
+        var cipher = crypto.createCipheriv('aes-256-cbc', this.options.encryptionKey, this.iv);
+        _store = Buffer.concat([cipher.update(_store), cipher.final()]);
+      }
 
-}
+      writeFileAtomic.sync("".concat(this.options.cwd, "/").concat(this.options.name, ".txt"), _store);
+    }
+    /**
+     * Asynchronously reads the data file from disk and returns the data parsed as
+     * an object.
+     * 
+     * @since 0.1.0
+     * @async
+     * 
+     * @returns {Promise<Store>}
+     * 
+     * @example
+     * 
+     * const data = await bouillon.read();
+     */
+
+  }, {
+    key: "read",
+    value: function read() {
+      var _this2 = this;
+
+      return new Promise(function (resolve) {
+        var stream = fs.createReadStream("".concat(_this2.options.cwd, "/").concat(_this2.options.name, ".txt"));
+        var response;
+        stream.on('data', function (data) {
+          if (_this2.options.encryptionKey) {
+            var decipher = crypto.createDecipheriv('aes-256-cbc', _this2.options.encryptionKey, _this2.iv);
+            response = JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]));
+          }
+
+          stream.destroy();
+        });
+        stream.on('close', function () {
+          return resolve(response);
+        });
+      });
+    }
+  }, {
+    key: "store",
+    get: function get() {
+      return this._store;
+    }
+  }]);
+
+  return Bouillion;
+}();
+
+module.exports = Bouillion;

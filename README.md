@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="250" height="250" src="./Bouillon.png">
+  <img width="250" height="250" src="./bouillon.png">
 </p>
 
 <h1 align="center">Bouillon</h1>
