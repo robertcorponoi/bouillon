@@ -1,6 +1,6 @@
 'use strict'
 
-/// <reference path="../interfaces/Store.ts" />
+///<reference path="../interfaces/Store.ts" />
 
 /**
  * Contains methods for searching the storage object for particular

@@ -10,6 +10,7 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
     "bundle": "rollup -c",
+    "bundle:watch": "rollup -c --watch",
     "test": "mocha"
   },
   "keywords": [

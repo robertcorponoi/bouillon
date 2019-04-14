@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const writeFileAtomic = require('write-file-atomic');
 
 import Options from './options/Options';
-import { getKeyValue } from './utils/search';
+import * as search from './utils/search';
 
 // Reset the modules cache.
 delete require.cache[require.resolve(__filename)];
@@ -24,7 +24,7 @@ delete require.cache[require.resolve(__filename)];
  * 
  * @author Robert Corponoi <robertcorponoi@gmail.com>
  * 
- * @version 1.1.0
+ * @version 1.1.1
  */
 export default class Bouillion {
 
@@ -117,7 +117,7 @@ export default class Bouillion {
 
     const _store: Store = this._store;
 
-    return getKeyValue(keys, _store);
+    return search.getKeyValue(keys, _store);
 
   }
 
@@ -156,7 +156,7 @@ export default class Bouillion {
 
       let _store: Store = this._store;
 
-      _store = getKeyValue(keys, _store)!;
+      _store = search.getKeyValue(keys, _store)!;
 
       if (_store == undefined) throw new Error('Creation of only 1 new key per set operation is supported');
 
