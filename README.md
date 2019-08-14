@@ -233,6 +233,18 @@ let data = await bouillon.read().catch((err) => console.log(err));
 
 ---
 
+### **clear()**
+
+Clears all data from the store.
+
+Example using `.then()`:
+
+```js
+bouillon.clear();
+```
+
+---
+
 ## **store**
 
 `store` simply returns the current local data object. It's the same as if you would access the store as `bouillon._store`.
