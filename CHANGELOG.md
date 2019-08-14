@@ -1,3 +1,7 @@
+1.2.0 / 2019-08-14
+==================
+* [FEATURE] Added clear method
+
 1.1.2 / 2019-08-13
 ==================
 * [FEATURE] Updated all dev dependencies to their latest versions.

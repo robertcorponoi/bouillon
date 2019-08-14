@@ -1,3 +1,4 @@
+import Store from '../interfaces/Store';
 /**
  * Contains methods for searching the storage object for particular
  * data.
