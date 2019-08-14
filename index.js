@@ -153,8 +153,8 @@ function getKeyValue(keys, store) {
     _iteratorError = err;
   } finally {
     try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
+      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+        _iterator["return"]();
       }
     } finally {
       if (_didIteratorError) {
@@ -343,7 +343,7 @@ function () {
         if (_this.options.encryptionKey) {
           _this.iv = crypto.randomBytes(16);
           var cipher = crypto.createCipheriv('aes-256-cbc', _this.options.encryptionKey, _this.iv);
-          _store = Buffer.concat([cipher.update(_store), cipher.final()]);
+          _store = Buffer.concat([cipher.update(_store), cipher["final"]()]);
         }
 
         writeFileAtomic("".concat(_this.options.cwd, "/").concat(_this.options.name, ".txt"), _store, function (err) {
@@ -374,7 +374,7 @@ function () {
       if (this.options.encryptionKey) {
         this.iv = crypto.randomBytes(16);
         var cipher = crypto.createCipheriv('aes-256-cbc', this.options.encryptionKey, this.iv);
-        _store = Buffer.concat([cipher.update(_store), cipher.final()]);
+        _store = Buffer.concat([cipher.update(_store), cipher["final"]()]);
       }
 
       writeFileAtomic.sync("".concat(this.options.cwd, "/").concat(this.options.name, ".txt"), _store);
@@ -404,7 +404,7 @@ function () {
         stream.on('data', function (data) {
           if (_this2.options.encryptionKey) {
             var decipher = crypto.createDecipheriv('aes-256-cbc', _this2.options.encryptionKey, _this2.iv);
-            response = JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]));
+            response = JSON.parse(Buffer.concat([decipher.update(data), decipher["final"]()]));
           }
 
           stream.destroy();
