@@ -1,3 +1,5 @@
+'use strict'
+
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
@@ -17,22 +19,13 @@ export default {
 
     commonjs(),
 
-    babel({
-
-      extensions,
-
-      runtimeHelpers: true,
-
-      include: ['src/**/*']
-
-    }),
+    babel({ extensions, runtimeHelpers: true, include: ['src/**/*'] }),
 
   ],
 
-  output: [
-    {
-      file: pkg.main,
-      format: 'cjs',
-
-    }],
+  output: [{
+    file: pkg.main,
+    format: 'cjs',
+  }],
+  
 };

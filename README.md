@@ -6,11 +6,15 @@
 
 <p align="center">Simple JSON storage API for working with persistent data in various types of Node applications<p>
 
-<div align="center" style="margin-bottom: 1.5rem">
-  <a href="https://badge.fury.io/js/bouillon"><img src="https://badge.fury.io/js/bouillon.svg" alt="npm version" height="18"></a>
-  <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="build" height="18"></a>
+<div align="center">
+
+  [![NPM version](https://img.shields.io/npm/v/bouillon.svg?style=flat)](https://www.npmjs.com/package/bouillon)
+  [![Known Vulnerabilities](https://snyk.io/test/github/robertcorponoi/bouillon/badge.svg)](https://snyk.io/test/github/robertcorponoi/bouillon)
+  [![NPM downloads](https://img.shields.io/npm/dm/bouillon.svg?style=flat)](https://www.npmjs.com/package/bouillon)
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/github/issues/robertcorponoi/bouillon.svg" alt="issues" height="18"></a>
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/github/license/robertcorponoi/bouillon.svg" alt="license" height="18"></a>
+  [![Gitter](https://badges.gitter.im/gitterHQ/gitter.svg)](https://gitter.im/robertcorponoi)
+
 </div>
 
 Bouillon is a persistant storage solution for Node that lets you manage your data as an object and when you're ready it will encrypt and write the file for you atomically to disk. You can work with your local copy of the data and save/read the stored version at any time.

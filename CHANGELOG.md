@@ -1,3 +1,8 @@
+1.2.1 / 2019-11-04
+==================
+* [FEATURE] Updated dependencies to their latest versions.
+* [MISC] Added more badges to README.
+
 1.2.0 / 2019-08-14
 ==================
 * [FEATURE] Added clear method
