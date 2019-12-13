@@ -10,6 +10,7 @@
 
   [![NPM version](https://img.shields.io/npm/v/bouillon.svg?style=flat)](https://www.npmjs.com/package/bouillon)
   [![Known Vulnerabilities](https://snyk.io/test/github/robertcorponoi/bouillon/badge.svg)](https://snyk.io/test/github/robertcorponoi/bouillon)
+  ![npm](https://img.shields.io/npm/dt/bouillon)
   [![NPM downloads](https://img.shields.io/npm/dm/bouillon.svg?style=flat)](https://www.npmjs.com/package/bouillon)
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/github/issues/robertcorponoi/bouillon.svg" alt="issues" height="18"></a>
   <a href="https://badge.fury.io/js/bouillon"><img src="https://img.shields.io/github/license/robertcorponoi/bouillon.svg" alt="license" height="18"></a>

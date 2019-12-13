@@ -1,6 +1,6 @@
 {
   "name": "bouillon",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Simple JSON storage API for working with persistent data in various types of Node applications.",
   "main": "index.js",
   "scripts": {
@@ -30,28 +30,28 @@
     "url": "https://github.com/robertcorponoi/bouillon"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-typescript": "^7.6.0",
-    "@types/write-file-atomic": "^2.1.2",
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-typescript": "^7.7.4",
+    "@types/write-file-atomic": "^3.0.0",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
-    "rollup": "^1.26.3",
+    "rollup": "^1.27.12",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "sinon": "^7.5.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.3",
+    "@babel/runtime": "^7.7.6",
     "write-file-atomic": "^3.0.1"
   }
 }

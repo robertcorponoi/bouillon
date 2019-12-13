@@ -50,7 +50,7 @@ export default class Bouillion {
      *
      * const store = bouillon.store;
      */
-    readonly store: Store;
+    get store(): Store;
     /**
      * Returns the value associated with the specified key.
      *
