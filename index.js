@@ -183,9 +183,7 @@ delete require.cache[require.resolve(__filename)];
  * @author Robert Corponoi <robertcorponoi@gmail.com>
  */
 
-var Bouillion =
-/*#__PURE__*/
-function () {
+var Bouillion = /*#__PURE__*/function () {
   /**
    * The options for this instance of Bouillon.
    * 
