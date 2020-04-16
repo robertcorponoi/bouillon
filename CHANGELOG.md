@@ -1,3 +1,6 @@
+## 1.3.1 / 2020-04-16
+- [MISC] Updated out-of-date dependencies to their latest versions which also fixed all possible fixed security vulnerabilities.
+
 ## 1.3.0 / 2020-03-12
 - [DOCS] Moved logo to graphics repo.
 - [MISC] Changed CHANGELOG format.
